@@ -1,0 +1,231 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: klusterlets.operator.open-cluster-management.io
+spec:
+  group: operator.open-cluster-management.io
+  names:
+    kind: Klusterlet
+    listKind: KlusterletList
+    plural: klusterlets
+    singular: klusterlet
+  scope: Cluster
+  preserveUnknownFields: false
+  versions:
+  - name: v1
+    schema:
+      openAPIV3Schema:
+        description: Klusterlet represents controllers on the managed cluster. 
+        type: object
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: Spec represents the desired deployment configuration of Klusterlet
+              agent.
+            type: object
+            properties:
+              clusterName:
+                description: ClusterName is the name of the managed cluster to be
+                  created on hub. The Klusterlet agent generates a random name if
+                  it is not set, or discovers the appropriate cluster name on OpenShift.
+                type: string
+              externalServerURLs:
+                description: ExternalServerURLs represents the a list of apiserver
+                type: array
+                items:
+                  description: ServerURL represents the apiserver url and ca bundle
+                    that is accessible externally
+                  type: object
+                  properties:
+                    caBundle:
+                      description: CABundle is the ca bundle to connect to apiserver
+                        of the managed cluster. System certs are used if it is not
+                        set.
+                      type: string
+                      format: byte
+                    url:
+                      description: URL is the url of apiserver endpoint of the managed
+                        cluster.
+                      type: string
+              namespace:
+                description: Namespace is the namespace to deploy the agent.
+                type: string
+              nodePlacement:
+                description: NodePlacement enables explicit control over the scheduling
+                  of the deployed pods.
+                type: object
+                properties:
+                  nodeSelector:
+                    description: NodeSelector defines which Nodes the Pods are scheduled
+                      on. The default is an empty list.
+                    type: object
+                    additionalProperties:
+                      type: string
+                  tolerations:
+                    description: Tolerations is attached by pods to tolerate.
+                    type: array
+                    items:
+                      description: The pod this Toleration is attached to tolerates
+                        any taint
+                      type: object
+                      properties:
+                        effect:
+                          description: Effect indicates the taint effect to match.
+                            
+                          type: string
+                        key:
+                          description: Key is the taint key that the toleration applies
+                            to. Empty means match all taint keys.
+                          type: string
+                        operator:
+                          description: Operator represents a key's relationship to
+                            the value. 
+                          type: string
+                        tolerationSeconds:
+                          description: TolerationSeconds represents the period of
+                            time the toleration
+                          type: integer
+                          format: int64
+                        value:
+                          description: Value is the taint value the toleration matches
+                            to. If the operator is Exists, the value should be empty,
+                            otherwise just a regular string.
+                          type: string
+              registrationImagePullSpec:
+                description: RegistrationImagePullSpec represents the desired image
+                  configuration of registration agent.
+                type: string
+              workImagePullSpec:
+                description: WorkImagePullSpec represents the desired image configuration
+                  of work agent.
+                type: string
+          status:
+            description: Status represents the current status of Klusterlet agent.
+            type: object
+            properties:
+              conditions:
+                description: 'Conditions contain the different condition statuses'
+                type: array
+                items:
+                  description: 'Conditions contain the different condition statuses'
+                  type: object
+                  required:
+                  - lastTransitionTime
+                  - message
+                  - reason
+                  - status
+                  - type
+                  properties:
+                    lastTransitionTime:
+                      description: lastTransitionTime is the last time the condition
+                        transitioned
+                      type: string
+                      format: date-time
+                    message:
+                      description: message is a human readable message indicating
+                        details about the transition. This may be an empty string.
+                      type: string
+                      maxLength: 32768
+                    observedGeneration:
+                      description: observedGeneration represents the .metadata.generation
+                        that the condition was set based upon.
+                      type: integer
+                      format: int64
+                      minimum: 0
+                    reason:
+                      description: reason contains a programmatic identifier indicating
+                        the reason for the condition's last transition.
+                      type: string
+                      maxLength: 1024
+                      minLength: 1
+                      pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
+                    status:
+                      description: status of the condition, one of True, False, Unknown.
+                      type: string
+                      enum:
+                      - "True"
+                      - "False"
+                      - Unknown
+                    type:
+                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
+                      type: string
+                      maxLength: 316
+                      pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
+              generations:
+                description: Generations are used to determine when an item needs
+                  to be reconciled or has changed in a way that needs a reaction.
+                type: array
+                items:
+                  description: GenerationStatus keeps track of the generation for
+                    a given resource so that decisions about forced updates can be
+                    made. The definition matches the GenerationStatus defined in github.com/openshift/api/v1
+                  type: object
+                  properties:
+                    group:
+                      description: group is the group of the resource that you're
+                        tracking
+                      type: string
+                    lastGeneration:
+                      description: lastGeneration is the last generation of the resource
+                        that controller applies
+                      type: integer
+                      format: int64
+                    name:
+                      description: name is the name of the resource that you're tracking
+                      type: string
+                    namespace:
+                      description: namespace is where the resource that you're tracking
+                        is
+                      type: string
+                    resource:
+                      description: resource is the resource type of the resource that
+                        you're tracking
+                      type: string
+                    version:
+                      description: version is the version of the resource that you're
+                        tracking
+                      type: string
+              observedGeneration:
+                description: ObservedGeneration is the last generation change you've
+                  dealt with
+                type: integer
+                format: int64
+              relatedResources:
+                description: RelatedResources are used to track the resources that
+                  are related to this Klusterlet.
+                type: array
+                items:
+                  description: RelatedResourceMeta represents the resource that is
+                    managed by an operator
+                  type: object
+                  properties:
+                    group:
+                      description: group is the group of the resource that you're
+                        tracking
+                      type: string
+                    name:
+                      description: name is the name of the resource that you're tracking
+                      type: string
+                    namespace:
+                      description: namespace is where the thing you're tracking is
+                      type: string
+                    resource:
+                      description: resource is the resource type of the resource that
+                        you're tracking
+                      type: string
+                    version:
+                      description: version is the version of the thing you're tracking
+                      type: string
+    served: true
+    storage: true
+    subresources:
+      status: {}

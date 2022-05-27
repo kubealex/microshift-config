@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: klusterlet
+  name: klusterlet
+  namespace: open-cluster-management-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: klusterlet
+  template:
+    metadata:
+      annotations:
+        target.workload.openshift.io/management: '{"effect": "PreferredDuringScheduling"}'    
+      labels:
+        app: klusterlet
+    spec:
+      containers:
+      - args:
+        - /registration-operator
+        - klusterlet
+        image: registry.redhat.io/rhacm2/registration-rhel8-operator@sha256:79c06ed772efd6f6308de84b8b361f248aac49702a96d63b5c54a8d803bd043e
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8443
+            scheme: HTTPS
+          initialDelaySeconds: 2
+          periodSeconds: 10
+        name: klusterlet
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8443
+            scheme: HTTPS
+          initialDelaySeconds: 2
+      serviceAccountName: klusterlet

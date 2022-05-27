@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - klusterlet-crd.yaml
+  - klusterlet-namespace.yaml
+  - klusterlet-service-account.yaml
+  - klusterlet-clusterrole.yaml 
+  - klusterlet-bootstraphubkubeconfig.yaml
+  - klusterlet-dockerconfig.yaml
+  - klusterlet-deployment.yaml
+  - klusterlet.yaml

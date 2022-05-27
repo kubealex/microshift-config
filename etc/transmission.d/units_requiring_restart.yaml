@@ -1,0 +1,4 @@
+crio.service:
+  - /etc/crio/*
+microshift.service:
+  - /var/lib/microshift/*
