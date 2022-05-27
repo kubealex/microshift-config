@@ -6,7 +6,7 @@ resources:
   - klusterlet-namespace.yaml
   - klusterlet-service-account.yaml
   - klusterlet-clusterrole.yaml 
-  - klusterlet-bootstraphubkubeconfig.yaml
+  - klusterlet-bootstrap-hub-kubeconfig.yaml
   - klusterlet-dockerconfig.yaml
   - klusterlet-deployment.yaml
   - klusterlet.yaml
